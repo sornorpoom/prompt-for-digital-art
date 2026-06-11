@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>คลัง Prompt ปฏิสัมพันธ์สำหรับคุณครู | Prompt Library for Teachers</title>
+    <meta name="description" content="คลังคำสั่งปัญญาประดิษฐ์สร้างสรรค์เพื่อช่วยคุณครูออกแบบสื่อการเรียนการสอนและแนะแนวอาชีพพหุปัญญาผู้เรียน">
+    <!-- Google Fonts: Inter & Outfit & Noto Sans Thai -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Thai:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body class="dark-theme">
+    <div class="app-container">
+        <!-- Top Navbar -->
+        <header class="app-header">
+            <div class="header-brand">
+                <div class="logo-icon"><i data-lucide="sparkles"></i></div>
+                <div class="brand-text">
+                    <h1>ครูพร้อมใช้ (AI Prompt Library)</h1>
+                    <p>คลังคำสั่งปฏิสัมพันธ์เพื่อยกระดับทักษะและการเรียนรู้ยุคดิจิทัล</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <div class="theme-toggle" id="theme-toggle-btn" title="สลับโหมดมืด/สว่าง">
+                    <i data-lucide="moon" class="moon-icon"></i>
+                    <i data-lucide="sun" class="sun-icon"></i>
+                </div>
+                <span class="badge badge-primary">เชียงใหม่ Lanna Edition</span>
+            </div>
+        </header>
+
+        <!-- Main Workspace -->
+        <main class="app-body">
+            <!-- Sidebar: Categories -->
+            <aside class="sidebar-categories">
+                <nav class="categories-nav">
+                    <button class="cat-btn active" data-category="Career">
+                        <i data-lucide="briefcase"></i>
+                        <span>อาชีพ (Career)</span>
+                    </button>
+                    <button class="cat-btn" data-category="Culture">
+                        <i data-lucide="palmtree"></i>
+                        <span>วัฒนธรรม (Culture)</span>
+                    </button>
+                    <button class="cat-btn" data-category="Food">
+                        <i data-lucide="utensils"></i>
+                        <span>อาหาร (Food)</span>
+                    </button>
+                    <button class="cat-btn" data-category="Person">
+                        <i data-lucide="users"></i>
+                        <span>บุคคล (Person)</span>
+                    </button>
+                    <button class="cat-btn" data-category="Vehicle">
+                        <i data-lucide="car-front"></i>
+                        <span>ยานพาหนะ (Vehicle)</span>
+                    </button>
+                </nav>
+                <div class="sidebar-footer">
+                    <p>จัดทำโดยสำนักงานศึกษาธิการจังหวัดเชียงใหม่</p>
+                </div>
+            </aside>
+
+            <!-- Middle Sidebar: Prompt List -->
+            <section class="prompt-list-section">
+                <div class="search-box-container">
+                    <div class="search-input-wrapper">
+                        <i data-lucide="filter" class="search-icon"></i>
+                        <select id="prompt-keyword-filter">
+                            <option value="all">🔍 แสดงทั้งหมด (All)</option>
+                            <option value="dashboard">📊 Dashboard / UI แผงควบคุม</option>
+                            <option value="starterpack">📦 Starter Pack ของเล่นจำลองอาชีพ</option>
+                            <option value="packaging">🎁 Packaging บรรจุภัณฑ์สินค้า</option>
+                            <option value="pose">👤 Character Pose Sheet ท่าทางครู</option>
+                            <option value="crayon">🖍️ Crayon ภาพวาดสีเทียนฝีมือเด็ก</option>
+                            <option value="lanna">🏮 Lanna Crafts หัตถกรรมล้านนา</option>
+                        </select>
+                    </div>
+                    <div class="results-count">พบทั้งหมด <span id="count-number">0</span> รายการ</div>
+                </div>
+                <div class="prompt-list" id="prompt-items-container">
+                    <!-- Prompt Items will be loaded dynamically here -->
+                    <div class="loading-spinner">กำลังโหลดข้อมูล...</div>
+                </div>
+                <!-- Pagination Controls -->
+                <div class="pagination-container">
+                    <button class="pag-btn" id="btn-prev-page" title="หน้าก่อนหน้า">
+                        <i data-lucide="chevron-left"></i>
+                        <span>ก่อนหน้า</span>
+                    </button>
+                    <span class="page-info" id="page-indicator">หน้า 1 / 5</span>
+                    <button class="pag-btn" id="btn-next-page" title="หน้าถัดไป">
+                        <span>ถัดไป</span>
+                        <i data-lucide="chevron-right"></i>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Right Panel: Main Workspace & Prompt Details -->
+            <section class="prompt-workspace-section" id="workspace-container">
+                <!-- Select Prompt Welcome screen by default -->
+                <div class="welcome-screen" id="welcome-screen">
+                    <div class="welcome-content">
+                        <i data-lucide="rocket" class="welcome-icon"></i>
+                        <h2>ยินดีต้อนรับสู่ระบบคลัง Prompt ปฏิสัมพันธ์</h2>
+                        <p>กรุณาเลือกรายการคำสั่งต้นแบบ (Prompt Template) ด้านซ้ายเพื่อเริ่มต้นปรับแต่งและใช้งาน</p>
+                    </div>
+                </div>
+
+                <!-- Active Workspace Detail -->
+                <div class="active-workspace hidden" id="active-workspace">
+                    <div class="workspace-header">
+                        <div class="workspace-title-area">
+                            <span class="prompt-code" id="active-code">PM-CAR-001</span>
+                            <h2 id="active-title">ชื่อหัวข้อ Prompt</h2>
+                            <p class="prompt-meta">
+                                <span class="meta-item"><i data-lucide="book-open"></i> <span id="active-subject">กลุ่มสาระการเรียนรู้</span></span>
+                                <span class="meta-item"><i data-lucide="calendar"></i> <span id="active-timestamp">บันทึกเมื่อ</span></span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="workspace-grid">
+                        <!-- Left inside: Description, Variables Form and Guideline -->
+                        <div class="workspace-left">
+                            <div class="card card-glass desc-card">
+                                <h3>📝 คำอธิบาย</h3>
+                                <p id="active-description">คำอธิบายรายละเอียดแนวทางและการใช้งานคำสั่งเพื่อจุดประสงค์ต่างๆ</p>
+                            </div>
+
+                            <div class="card card-glass app-card">
+                                <div class="card-header-with-icon">
+                                    <i data-lucide="graduation-cap"></i>
+                                    <h3>🚀 แนวทางการประยุกต์ใช้ในสถานศึกษา</h3>
+                                </div>
+                                <div class="app-tips" id="active-application">
+                                    แนวทางสำหรับคุณครูนำไปสอนหรือแนวทางสำหรับผู้บริหารประยุกต์ใช้
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right inside: Live Output Preview, Actions & Sample Image -->
+                        <div class="workspace-right">
+                            <div class="card card-glass preview-card">
+                                <div class="preview-header">
+                                    <h3>💻 Master Prompt พรีวิวสด</h3>
+                                    <div class="preview-actions">
+                                        <button class="action-btn" id="btn-copy-prompt" title="คัดลอก Prompt">
+                                            <i data-lucide="copy"></i>
+                                            <span>Copy Prompt</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="code-container">
+                                    <pre id="prompt-preview">ข้อความ Prompt ที่ปรับแต่งเรียบร้อยแล้วจะขึ้นตรงนี้...</pre>
+                                </div>
+                            </div>
+
+                            <div class="card card-glass image-preview-card" id="image-preview-container">
+                                <h3>🖼️ ตัวอย่างผลลัพธ์จาก AI</h3>
+                                <div class="image-wrapper">
+                                    <img src="" id="active-image" alt="ภาพตัวอย่างผลลัพธ์ของคำสั่งนี้">
+                                    <div class="image-overlay">
+                                        <a href="" id="active-image-link" target="_blank" class="overlay-link-btn">
+                                            <i data-lucide="external-link"></i> ดูภาพความละเอียดสูง
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Launch AI Quick Links -->
+                            <div class="launch-links-container">
+                                <h4>🚀 ลิงก์ตรงดิ่งไปใช้กับ Gemini</h4>
+                                <div class="launch-buttons-single">
+                                    <a href="https://gemini.google.com" target="_blank" class="launch-btn gemini-btn-primary">
+                                        <i data-lucide="sparkles"></i> เปิดใช้งานบน Google Gemini
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Toast Notification for Copy Success -->
+    <div class="toast-notification hidden" id="toast-message">
+        <i data-lucide="check-circle-2"></i>
+        <span>คัดลอก Prompt ลงคลิปบอร์ดแล้ว! คุณสามารถนำไปใช้วางใน Google Gemini ได้ทันที</span>
+    </div>
+
+    <script src="database.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
