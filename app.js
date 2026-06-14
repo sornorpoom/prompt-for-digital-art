@@ -268,8 +268,91 @@ document.addEventListener('DOMContentLoaded', () => {
         </ul>`;
     }
 
-    // 7. Copy to clipboard
-    btnCopyPrompt.addEventListener('click', () => {
+    // 7. Registration & Copy Control
+    // URL สำหรับส่งข้อมูลไปยัง Google Sheet (ผู้ใช้จะต้องนำ Web App URL จาก Google Apps Script มาใส่ตรงนี้)
+    const GOOGLE_SHEET_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwPIUxRE558a2rvRGqmKvPcpEToOKsvL1XwJRVk7k99x83dPnFNX4xhBHzJtD6GgYSR/exec"; 
+
+    const registerModal = document.getElementById('register-modal');
+    const registerForm = document.getElementById('register-form');
+    const btnCloseModal = document.getElementById('btn-close-modal');
+    const btnSubmitRegister = document.getElementById('btn-submit-register');
+    
+    let registrationCallback = null;
+
+    // ตรวจสอบสถานะการลงทะเบียนจาก sessionStorage (เมื่อปิดหน้าต่าง/แท็บ ข้อมูลจะรีเซ็ตและต้องลงทะเบียนใหม่)
+    function isUserRegistered() {
+        return sessionStorage.getItem('prompt_user_registered') === 'true';
+    }
+
+    // ฟังก์ชันเปิด Modal ลงทะเบียน
+    function showRegistrationModal(callback) {
+        registrationCallback = callback;
+        registerModal.classList.remove('hidden');
+    }
+
+    // ฟังก์ชันปิด Modal ลงทะเบียน
+    function hideRegistrationModal() {
+        registerModal.classList.add('hidden');
+        registrationCallback = null;
+        registerForm.reset();
+    }
+
+    // ปุ่มยกเลิก
+    btnCloseModal.addEventListener('click', hideRegistrationModal);
+
+    // เมื่อส่งฟอร์มลงทะเบียน
+    registerForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        const name = document.getElementById('reg-name').value.trim();
+        const email = document.getElementById('reg-email').value.trim();
+        const school = document.getElementById('reg-school').value.trim();
+        const affiliation = document.getElementById('reg-affiliation').value.trim();
+        const purpose = document.getElementById('reg-purpose').value.trim();
+        
+        btnSubmitRegister.disabled = true;
+        btnSubmitRegister.textContent = 'กำลังลงทะเบียน...';
+        
+        // ส่งข้อมูลแบบ FormData ไปยัง Google Apps Script (ใช้ no-cors เพื่อไม่ให้ติดปัญหา CORS บล็อก)
+        const formData = new FormData();
+        formData.append('name', name);
+        formData.append('email', email);
+        formData.append('school', school);
+        formData.append('affiliation', affiliation);
+        formData.append('purpose', purpose);
+        
+        fetch(GOOGLE_SHEET_WEB_APP_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            body: formData
+        })
+        .then(() => {
+            // บันทึกสถานะการลงทะเบียนไว้ชั่วคราวในเซสชันนี้
+            sessionStorage.setItem('prompt_user_registered', 'true');
+            hideRegistrationModal();
+            
+            // ดำเนินการคัดลอกต่อหลังจากลงทะเบียนเสร็จ
+            if (registrationCallback) {
+                registrationCallback();
+            }
+        })
+        .catch(err => {
+            console.error('Registration error:', err);
+            // กรณีระบบเครือข่ายมีปัญหา ให้สิทธิ์ผู้ใช้คัดลอกไปก่อนเพื่อไม่ให้ขัดขวางการทำงาน (แต่บันทึกสถานะลงทะเบียนไว้ชั่วคราว)
+            sessionStorage.setItem('prompt_user_registered', 'true');
+            hideRegistrationModal();
+            if (registrationCallback) {
+                registrationCallback();
+            }
+        })
+        .finally(() => {
+            btnSubmitRegister.disabled = false;
+            btnSubmitRegister.textContent = 'ลงทะเบียนและคัดลอก';
+        });
+    });
+
+    // ฟังก์ชันคัดลอก Prompt
+    function copyPromptToClipboard() {
         const textToCopy = promptPreview.textContent;
         
         navigator.clipboard.writeText(textToCopy)
@@ -283,5 +366,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error('Could not copy text: ', err);
                 alert('เกิดข้อผิดพลาดในการคัดลอกข้อความ กรุณาคลุมดำและคัดลอกด้วยตนเอง');
             });
+    }
+
+    // เมื่อกดปุ่ม Copy Prompt
+    btnCopyPrompt.addEventListener('click', () => {
+        if (!isUserRegistered()) {
+            showRegistrationModal(() => {
+                copyPromptToClipboard();
+            });
+        } else {
+            copyPromptToClipboard();
+        }
+    });
+
+    // เมื่อลากคลุมดำแล้วกดคัดลอก (Ctrl+C หรือคลิกขวาคัดลอก) ในช่องพรีวิว
+    promptPreview.addEventListener('copy', (e) => {
+        if (!isUserRegistered()) {
+            e.preventDefault(); // บล็อกการคัดลอกไว้ก่อน
+            showRegistrationModal(() => {
+                // คัดลอกข้อความลงคลิปบอร์ดให้ทันทีหลังลงทะเบียนเสร็จ
+                copyPromptToClipboard();
+            });
+        }
     });
 });

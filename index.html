@@ -207,6 +207,44 @@
         <span>คัดลอก Prompt ลงคลิปบอร์ดแล้ว! คุณสามารถนำไปใช้วางใน Google Gemini ได้ทันที</span>
     </div>
 
+    <!-- Registration Modal -->
+    <div class="modal-overlay hidden" id="register-modal">
+        <div class="card card-glass modal-card">
+            <div class="modal-header">
+                <div class="logo-icon"><i data-lucide="sparkles"></i></div>
+                <h3>ลงทะเบียนเพื่อเปิดใช้งานการคัดลอก</h3>
+                <p>ลงทะเบียนเพียงครั้งเดียวเพื่อคัดลอกคำสั่งไปใช้พัฒนาการเรียนการสอน</p>
+            </div>
+            <form id="register-form" class="variables-form">
+                <div class="form-group">
+                    <label for="reg-name">ชื่อ - นามสกุล <span class="required">*</span></label>
+                    <input type="text" id="reg-name" required placeholder="เช่น นายสมชาย ใจดี">
+                </div>
+                <div class="form-group">
+                    <label for="reg-email">อีเมล (E-mail) <span class="required">*</span></label>
+                    <input type="email" id="reg-email" required placeholder="เช่น somchai@school.go.th">
+                </div>
+                <div class="form-group">
+                    <label for="reg-school">โรงเรียน <span class="required">*</span></label>
+                    <input type="text" id="reg-school" required placeholder="เช่น โรงเรียนเชียงใหม่วิทยา">
+                </div>
+                <div class="form-group">
+                    <label for="reg-affiliation">สังกัด <span class="required">*</span></label>
+                    <input type="text" id="reg-affiliation" required placeholder="เช่น สพม.เชียงใหม่, สพป.เชียงใหม่ เขต 1">
+                </div>
+                <div class="form-group">
+                    <label for="reg-purpose">วัตถุประสงค์การใช้งาน <span class="required">*</span></label>
+                    <textarea id="reg-purpose" required placeholder="เช่น ใช้สำหรับการจัดกิจกรรมแนะแนวชั้น ม.3, พัฒนาสื่อวิชาภาษาไทย" rows="2"></textarea>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" class="action-btn btn-secondary" id="btn-close-modal">ยกเลิก</button>
+                    <button type="submit" class="action-btn" id="btn-submit-register">ลงทะเบียนและคัดลอก</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script src="database.js"></script>
     <script src="app.js"></script>
 </body>
