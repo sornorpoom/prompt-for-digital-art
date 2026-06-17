@@ -81,6 +81,38 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
+        // Setup Back to Home button listener
+        const btnGoHome = document.getElementById('btn-go-home');
+        if (btnGoHome) {
+            btnGoHome.addEventListener('click', () => {
+                // Reset category to 'Career'
+                currentCategory = 'Career';
+                categoryButtons.forEach(b => {
+                    if (b.dataset.category === 'Career') {
+                        b.classList.add('active');
+                    } else {
+                        b.classList.remove('active');
+                    }
+                });
+                
+                // Reset keyword filter to 'all'
+                keywordFilter.value = 'all';
+                
+                // Re-filter and render list
+                applyFiltersAndReset();
+                
+                // Reset right panel (show welcome screen)
+                activePrompt = null;
+                welcomeScreen.classList.remove('hidden');
+                activeWorkspace.classList.add('hidden');
+                
+                // Remove active styling from any prompt items
+                document.querySelectorAll('.prompt-item-card').forEach(card => {
+                    card.classList.remove('active');
+                });
+            });
+        }
+
         // Apply initial filters
         applyFiltersAndReset();
         
